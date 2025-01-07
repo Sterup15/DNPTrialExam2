@@ -1,0 +1,64 @@
+﻿@page "/ViewDogs"
+@using Blazor.DataEntities
+@using Blazor.Services.KennelService
+@inject IKennelService KennelService
+<h3>ViewDogs</h3>
+
+<MaleFemaleComponent/>
+
+@if (dogs == null || dogs.Count == 0)
+{
+    <p>No entries found.</p>
+}
+else
+{
+    <div class="dog-grid">
+        @foreach (var dog in dogs)
+        {
+            <div class="dog-card" @onclick="() => ShowSelectedDog(dog)">
+                <img src="@dog.ImageUrl" alt="@dog.Name"/>
+                <div class="dog-details">
+                    <h4>@dog.Name</h4>
+                </div>
+            </div>
+        }
+    </div>
+}
+
+@if (selectedDog != null)
+{
+    <div class="dog-popup">
+        <img src="@selectedDog.ImageUrl" alt="@selectedDog.Name"/>
+        <h4>@selectedDog.Name</h4>
+        <p>@selectedDog.Sex</p>
+        <p>@selectedDog.Breed</p>
+        <p>@selectedDog.Description</p>
+        <p>@selectedDog.ArrivalDate.ToString()</p>
+
+        <button @onclick="CloseSelectedDog">Close</button>
+    </div>
+}
+
+@code {
+    private List<Dog> dogs;
+    private Dog selectedDog;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var dogsList = await KennelService.GetDogsAsync();
+        dogs = dogsList
+            .OrderBy(dog => dog.ArrivalDate) // Sort by Year ascending
+            .ToList();
+    }
+
+    private void ShowSelectedDog(Dog dog)
+    {
+        selectedDog = dog;
+    }
+
+    private void CloseSelectedDog()
+    {
+        selectedDog = null;
+    }
+
+}

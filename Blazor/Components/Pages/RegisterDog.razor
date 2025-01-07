@@ -1,0 +1,66 @@
+﻿@page "/RegisterDog"
+@using Blazor.DataEntities
+@using Blazor.Services.KennelService
+@inject IKennelService KennelService
+
+<h3>RegisterDog</h3>
+
+<EditForm Model="DogToBeRegistered" OnValidSubmit="HandleValidSubmit">
+
+    <div>
+        <label>Name:</label>
+        <InputText @bind-Value="DogToBeRegistered.Name" class="form-control"/>
+    </div>
+    
+    <div>
+        <label>Breed:</label>
+        <InputText @bind-Value="DogToBeRegistered.Breed" class="form-control"/>
+    </div>
+
+    <div>
+        <label>Sex:</label>
+        <InputText @bind-Value="DogToBeRegistered.Sex" class="form-control"/>
+    </div>
+
+    <div>
+        <label>Description:</label>
+        <InputText @bind-Value="DogToBeRegistered.Description" class="form-control"/>
+    </div>
+
+    <div>
+        <label>Image URL:</label>
+        <InputText @bind-Value="DogToBeRegistered.ImageUrl" class="form-control"/>
+    </div>
+    
+    <!-- <InputDate @bind-Value="dog.ArrivalDate" @format="yyyy-MM-dd" class="form-control" /> -->
+
+
+    <button type="submit" class="btn btn-primary">Register Dog</button>
+</EditForm>
+
+@if (message != null)
+{
+    <p class="text-success">@message</p>
+}
+
+@code {
+    private Dog DogToBeRegistered = new Dog();
+    private string message;
+    
+    private async Task HandleValidSubmit()
+    {
+        try
+        {
+            Dog createdDog = await KennelService.RegisterDogAsync(DogToBeRegistered);
+            message = createdDog.Name + " successfully registered";
+
+            DogToBeRegistered = new Dog();
+        }
+        catch (Exception ex)
+        {
+            message = $"Error: {ex.Message}";
+        }
+        
+    }
+
+}

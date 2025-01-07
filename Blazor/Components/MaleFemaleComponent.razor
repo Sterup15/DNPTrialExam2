@@ -1,0 +1,45 @@
+﻿@using Blazor.DataEntities
+@using Blazor.Services.KennelService
+@inject IKennelService KennelService
+
+<h3>Male/Female Counter</h3>
+
+@if (Dogs == null || Dogs.Count == 0)
+{
+<p>No data available.</p>
+}
+
+<h4>Male Dog count: @maleCounter</h4>
+<h4>Female Dog count: @femaleCounter</h4>
+
+@code {
+
+    private List<Dog> Dogs;
+    private int maleCounter = 0;
+    private int femaleCounter = 0;
+
+    protected override async void OnInitialized()
+    {
+        Dogs = await KennelService.GetDogsAsync();
+        updateMaleFemaleCounter();
+    }
+
+    private void updateMaleFemaleCounter()
+    {
+        maleCounter = 0;
+        femaleCounter = 0;
+        foreach (Dog dog in Dogs)
+        {
+            if (dog.Sex.Equals("Male"))
+            {
+                maleCounter++;
+            }
+
+            if (dog.Sex.Equals("Female"))
+            {
+                femaleCounter++;
+            }
+        }
+    }
+
+}
